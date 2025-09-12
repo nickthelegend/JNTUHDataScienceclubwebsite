@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { FaInstagram, FaWhatsapp, FaLinkedin } from "react-icons/fa";
-import "@/app/_styles/globals.css";
 
 function Footer() {
   return (
