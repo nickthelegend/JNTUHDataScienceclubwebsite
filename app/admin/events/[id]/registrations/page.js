@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useParams } from 'next/navigation'
+import { sendRegistrationStatusEmail } from '@/lib/email-send'
 
 export default function EventRegistrations() {
   const { data: session, status } = useSession()
@@ -12,6 +13,7 @@ export default function EventRegistrations() {
   const eventId = params.id
 
   const [registrations, setRegistrations] = useState([])
+  const [event, setEvent] = useState(null)
   const [loading, setLoading] = useState(true)
   const [updatingId, setUpdatingId] = useState(null)
   const [editingReg, setEditingReg] = useState(null)
@@ -34,6 +36,7 @@ export default function EventRegistrations() {
       router.push('/admin/login')
       return
     }
+    fetchEvent()
     fetchRegistrations()
   }, [status, router, eventId, session])
 
@@ -42,6 +45,18 @@ export default function EventRegistrations() {
     const data = await res.json()
     setRegistrations(data)
     setLoading(false)
+  }
+
+  const fetchEvent = async () => {
+    try {
+      const res = await fetch(`/api/events/${eventId}`)
+      if (res.ok) {
+        const eventData = await res.json()
+        setEvent(eventData)
+      }
+    } catch (error) {
+      console.error('Failed to fetch event:', error)
+    }
   }
 
   const handleAccept = async (regId) => {
@@ -54,6 +69,18 @@ export default function EventRegistrations() {
       })
       if (res.ok) {
         fetchRegistrations()
+        // Send acceptance email
+        const registration = registrations.find(r => r.id === regId)
+        if (registration && registration.user && event) {
+          await sendRegistrationStatusEmail({
+            to: registration.user.email,
+            userName: registration.fullName,
+            eventName: event.title,
+            status: 'ACCEPTED',
+            eventDate: event.date,
+            eventLocation: event.location
+          })
+        }
       }
     } catch (error) {
       console.error('Failed to accept registration:', error)
@@ -72,6 +99,18 @@ export default function EventRegistrations() {
       })
       if (res.ok) {
         fetchRegistrations()
+        // Send rejection email
+        const registration = registrations.find(r => r.id === regId)
+        if (registration && registration.user && event) {
+          await sendRegistrationStatusEmail({
+            to: registration.user.email,
+            userName: registration.fullName,
+            eventName: event.title,
+            status: 'REJECTED',
+            eventDate: event.date,
+            eventLocation: event.location
+          })
+        }
       }
     } catch (error) {
       console.error('Failed to reject registration:', error)
@@ -163,6 +202,30 @@ export default function EventRegistrations() {
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Event Registrations</h1>
             <p className="text-gray-600 mt-2">Manage registrations for this event</p>
+            {!loading && (
+              <div className="mt-4 flex space-x-6">
+                <div className="text-sm">
+                  <span className="font-medium text-gray-900">Total: </span>
+                  <span className="text-gray-600">{registrations.length}</span>
+                </div>
+                <div className="text-sm">
+                  <span className="font-medium text-gray-900">Pending: </span>
+                  <span className="text-yellow-600">{registrations.filter(r => r.status === 'PENDING' || !r.status).length}</span>
+                </div>
+                <div className="text-sm">
+                  <span className="font-medium text-gray-900">Accepted: </span>
+                  <span className="text-green-600">{registrations.filter(r => r.status === 'ACCEPTED').length}</span>
+                </div>
+                <div className="text-sm">
+                  <span className="font-medium text-gray-900">Rejected: </span>
+                  <span className="text-red-600">{registrations.filter(r => r.status === 'REJECTED').length}</span>
+                </div>
+                <div className="text-sm">
+                  <span className="font-medium text-gray-900">Attended: </span>
+                  <span className="text-blue-600">{registrations.filter(r => r.status === 'ATTENDED').length}</span>
+                </div>
+              </div>
+            )}
           </div>
           <button
             onClick={handleExportCSV}

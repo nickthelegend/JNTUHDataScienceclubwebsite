@@ -2,13 +2,21 @@ import { prisma } from '@/lib/prisma'
 
 export async function GET(request, { params }) {
   const { slug } = params
-  console.log('API: Looking for slug:', slug)
+  console.log('API: Looking for slug/id:', slug)
 
   try {
-    const event = await prisma.event.findUnique({
+    // Try to find by slug first
+    let event = await prisma.event.findUnique({
       where: { slug }
     })
-    
+
+    // If not found by slug, try by id
+    if (!event) {
+      event = await prisma.event.findUnique({
+        where: { id: slug }
+      })
+    }
+
     console.log('API: Found event:', event)
 
     if (!event) {
