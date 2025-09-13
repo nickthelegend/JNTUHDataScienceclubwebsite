@@ -23,7 +23,8 @@ export default function EventRegistrations() {
     specialization: '',
     year: '',
     phoneNo: '',
-    isContentCreator: false
+    isContentCreator: false,
+    status: 'PENDING'
   })
 
   useEffect(() => {
@@ -52,7 +53,8 @@ export default function EventRegistrations() {
       specialization: reg.specialization || '',
       year: reg.year || '',
       phoneNo: reg.phoneNo || '',
-      isContentCreator: reg.isContentCreator
+      isContentCreator: reg.isContentCreator,
+      status: reg.status || 'PENDING'
     })
     setShowModal(true)
   }
@@ -77,7 +79,8 @@ export default function EventRegistrations() {
         specialization: '',
         year: '',
         phoneNo: '',
-        isContentCreator: false
+        isContentCreator: false,
+        status: 'PENDING'
       })
     }
   }
@@ -112,6 +115,12 @@ export default function EventRegistrations() {
                       <p className="text-sm text-gray-500">Year: {reg.year}</p>
                       <p className="text-sm text-gray-500">Phone: {reg.phoneNo}</p>
                       <p className="text-sm text-gray-500">Content Creator: {reg.isContentCreator ? 'Yes' : 'No'}</p>
+                      <p className="text-sm text-gray-500">Status: <span className={`font-medium ${
+                        reg.status === 'ACCEPTED' ? 'text-green-600' :
+                        reg.status === 'REJECTED' ? 'text-red-600' :
+                        reg.status === 'ATTENDED' ? 'text-blue-600' :
+                        'text-yellow-600'
+                      }`}>{reg.status || 'PENDING'}</span></p>
                     </div>
                     <button
                       onClick={() => handleEdit(reg)}
@@ -183,6 +192,17 @@ export default function EventRegistrations() {
                   />
                   Content Creator
                 </label>
+                <select
+                  value={formData.status}
+                  onChange={(e) => setFormData({...formData, status: e.target.value})}
+                  className="w-full p-2 border rounded-md"
+                  required
+                >
+                  <option value="PENDING">Pending</option>
+                  <option value="ACCEPTED">Accepted</option>
+                  <option value="REJECTED">Rejected</option>
+                  <option value="ATTENDED">Attended</option>
+                </select>
                 <div className="flex space-x-3">
                   <button
                     type="submit"
@@ -203,7 +223,8 @@ export default function EventRegistrations() {
                         specialization: '',
                         year: '',
                         phoneNo: '',
-                        isContentCreator: false
+                        isContentCreator: false,
+                        status: 'PENDING'
                       })
                     }}
                     className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md"

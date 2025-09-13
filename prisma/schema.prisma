@@ -101,6 +101,13 @@ model Event {
   @@map("events")
 }
 
+enum RegistrationStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  ATTENDED
+}
+
 model EventRegistration {
   id               String @id @default(cuid())
   userId           String
@@ -112,6 +119,7 @@ model EventRegistration {
   year             String?
   phoneNo          String?
   isContentCreator Boolean @default(false)
+  status           RegistrationStatus @default(PENDING)
   createdAt        DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)

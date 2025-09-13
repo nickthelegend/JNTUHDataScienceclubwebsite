@@ -48,6 +48,7 @@ export async function PUT(request, { params }) {
         year: body.year,
         phoneNo: body.phoneNo,
         isContentCreator: body.isContentCreator,
+        status: body.status,
       }
     })
 
