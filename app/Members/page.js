@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { FaLinkedin, FaEnvelope, FaGithub } from "react-icons/fa"; // Import the icons
 import jeevin from "@/public/members/Jeevin.jpg";
-import likitha from "@/public/members/likitha.JPG";
+import likitha from "@/public/members/likitha.jpg";
 import sindu from "@/public/members/sindu.jpg";
 import Praneetha from "@/public/members/praneetha.jpg";
 import Vaishnavi from "@/public/members/Vaishnavi.jpg";
