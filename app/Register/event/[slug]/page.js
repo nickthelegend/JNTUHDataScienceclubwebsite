@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useSession, signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useParams } from 'next/navigation'
@@ -14,6 +14,8 @@ export default function EventRegistration() {
   const [event, setEvent] = useState(null)
   const [eventLoading, setEventLoading] = useState(true)
   const [eventError, setEventError] = useState('')
+  const [isRegistered, setIsRegistered] = useState(false)
+  const checkedRef = useRef(false)
   
   useEffect(() => {
     const fetchEvent = async () => {
@@ -36,6 +38,24 @@ export default function EventRegistration() {
       fetchEvent()
     }
   }, [slug])
+
+  useEffect(() => {
+    if (event && session && !checkedRef.current) {
+      checkedRef.current = true
+      const checkRegistration = async () => {
+        try {
+          const regRes = await fetch(`/api/register/event?slug=${slug}`)
+          if (regRes.ok) {
+            const regData = await regRes.json()
+            setIsRegistered(regData.registered)
+          }
+        } catch (err) {
+          console.error('Failed to check registration status:', err)
+        }
+      }
+      checkRegistration()
+    }
+  }, [event, session, slug, router])
   
   const [formData, setFormData] = useState({
     fullName: session?.user?.fullName || '',
@@ -122,6 +142,16 @@ export default function EventRegistration() {
           </svg>
           <span>Continue with Google</span>
         </button>
+      </div>
+    )
+  }
+
+  if (isRegistered) {
+    return (
+      <div className="container mx-auto p-6 flex flex-col items-center justify-center min-h-[60vh]">
+        <h1 className="text-3xl font-bold mb-4">Already Registered!</h1>
+        <p className="text-green-600 mb-4">You are already registered for this event.</p>
+        <p className="text-gray-600">Redirecting back to event page...</p>
       </div>
     )
   }

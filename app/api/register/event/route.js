@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { PrismaClient } from '@prisma/client'
 import { getServerSession } from 'next-auth/next'
-import { authOptions } from '../auth/[...nextauth]/route'
+import { authOptions } from '../../auth/[...nextauth]/route'
 
 const prisma = new PrismaClient()
 
@@ -78,5 +78,50 @@ export async function POST(request) {
   } catch (error) {
     console.error(error)
     return NextResponse.json({ error: 'Failed to register' }, { status: 500 })
+  }
+}
+ 
+export async function GET(request) {
+  try {
+    const session = await getServerSession(authOptions)
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const { searchParams } = new URL(request.url)
+    const slug = searchParams.get('slug')
+    if (!slug) {
+      return NextResponse.json({ error: 'Slug required' }, { status: 400 })
+    }
+
+    const event = await prisma.event.findUnique({
+      where: { slug }
+    })
+
+    if (!event) {
+      return NextResponse.json({ error: 'Event not found' }, { status: 404 })
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id }
+    })
+
+    if (!user) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 })
+    }
+
+    const existingRegistration = await prisma.eventRegistration.findUnique({
+      where: {
+        userId_eventId: {
+          userId: user.id,
+          eventId: event.id
+        }
+      }
+    })
+
+    return NextResponse.json({ registered: !!existingRegistration })
+  } catch (error) {
+    console.error(error)
+    return NextResponse.json({ error: 'Failed to check registration' }, { status: 500 })
   }
 }
