@@ -96,7 +96,6 @@ export default function EventRegistration() {
 
       if (res.ok) {
         setSuccess(true)
-        setTimeout(() => router.push(`/events/${slug}`), 2000)
       } else {
         setError(data.error || 'Registration failed')
       }
@@ -155,12 +154,6 @@ export default function EventRegistration() {
             <p className="text-lg"><strong>Venue:</strong> {event.location || 'CSE Seminar Hall'}</p>
             <p className="text-sm text-gray-600 mt-2">Registration Fee: ₹50</p>
           </div>
-          {/* Placeholder for QR - can add static image if available */}
-          <div className="bg-white p-4 rounded-lg shadow flex justify-center">
-            <div className="w-24 h-24 bg-gray-300 rounded flex items-center justify-center">
-              QR Code
-            </div>
-          </div>
         </div>
         {/* Right column: Sign In Prompt */}
         <div>
@@ -185,11 +178,11 @@ export default function EventRegistration() {
             <h4 className="text-lg font-bold text-gray-800 mb-4">Stay Connected With Us!</h4>
             <p className="text-gray-600 mb-4">Community for further events and never miss updates</p>
             <div className="flex space-x-4">
-              <a href="https://wa.me/919100644" className="bg-green-500 text-white p-3 rounded-full hover:bg-green-600 transition">
+              <a href="https://chat.whatsapp.com/JPlO3NzxSBf9LkG9uYspoA" className="bg-green-500 text-white p-3 rounded-full hover:bg-green-600 transition">
                 <span className="sr-only">WhatsApp</span>
                 📱
               </a>
-              <a href="https://instagram.com/jntuhdsc" className="bg-pink-500 text-white p-3 rounded-full hover:bg-pink-600 transition">
+              <a href="https://www.instagram.com/datascienceclubjntuh/" className="bg-pink-500 text-white p-3 rounded-full hover:bg-pink-600 transition">
                 <span className="sr-only">Instagram</span>
                 📸
               </a>
@@ -198,7 +191,7 @@ export default function EventRegistration() {
                 💼
               </a>
             </div>
-            <p className="text-sm text-gray-500 mt-2">+91 91006 44100 | info@jntuhdsc.com</p>
+            <p className="text-sm text-gray-500 mt-2">+91 93981 77850 | info@jntuhdsc.com</p>
           </div>
         </div>
       </div>
@@ -227,12 +220,6 @@ export default function EventRegistration() {
             <p className="text-lg"><strong>Date:</strong> {new Date(event.date).toLocaleDateString()}</p>
             <p className="text-lg"><strong>Venue:</strong> {event.location || 'CSE Seminar Hall'}</p>
             <p className="text-sm text-gray-600 mt-2">Registration Fee: ₹50</p>
-          </div>
-          {/* Placeholder for QR - can add static image if available */}
-          <div className="bg-white p-4 rounded-lg shadow flex justify-center">
-            <div className="w-24 h-24 bg-gray-300 rounded flex items-center justify-center">
-              QR Code
-            </div>
           </div>
         </div>
         {/* Right column: Form */}
@@ -325,11 +312,11 @@ export default function EventRegistration() {
             <h4 className="text-lg font-bold text-gray-800 mb-4">Stay Connected With Us!</h4>
             <p className="text-gray-600 mb-4">Community for further events and never miss updates</p>
             <div className="flex space-x-4">
-              <a href="https://wa.me/919100644" className="bg-green-500 text-white p-3 rounded-full hover:bg-green-600 transition">
+              <a href="https://chat.whatsapp.com/JPlO3NzxSBf9LkG9uYspoA" className="bg-green-500 text-white p-3 rounded-full hover:bg-green-600 transition">
                 <span className="sr-only">WhatsApp</span>
                 📱
               </a>
-              <a href="https://instagram.com/jntuhdsc" className="bg-pink-500 text-white p-3 rounded-full hover:bg-pink-600 transition">
+              <a href="https://www.instagram.com/datascienceclubjntuh/" className="bg-pink-500 text-white p-3 rounded-full hover:bg-pink-600 transition">
                 <span className="sr-only">Instagram</span>
                 📸
               </a>
@@ -338,7 +325,7 @@ export default function EventRegistration() {
                 💼
               </a>
             </div>
-            <p className="text-sm text-gray-500 mt-2">+91 91006 44100 | info@jntuhdsc.com</p>
+            <p className="text-sm text-gray-500 mt-2">+91 93981 77850 | info@jntuhdsc.com</p>
           </div>
         </div>
       </div>
@@ -350,7 +337,6 @@ export default function EventRegistration() {
       <div className="container mx-auto p-6 flex flex-col items-center justify-center min-h-[60vh]">
         <h1 className="text-3xl font-bold mb-4">Already Registered!</h1>
         <p className="text-green-600 mb-4">You are already registered for this event.</p>
-        <p className="text-gray-600">Redirecting back to event page...</p>
       </div>
     )
   }
@@ -360,7 +346,6 @@ export default function EventRegistration() {
       <div className="container mx-auto p-6 flex flex-col items-center justify-center min-h-[60vh]">
         <h1 className="text-3xl font-bold mb-4">Registration Successful!</h1>
         <p className="text-green-600 mb-4">You have been registered for the event.</p>
-        <p className="text-gray-600">Redirecting back to event page...</p>
       </div>
     )
   }
