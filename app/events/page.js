@@ -1,3 +1,7 @@
+import { PrismaClient } from '@prisma/client'
+
+const prisma = new PrismaClient()
+
 import dsclublogo from "@/public/eventbgfinal.jpeg";
 import pic1 from "@/public/MeetAndGreet2024/roadmap1.jpg";
 import pic2 from "@/public/TechInsight/TechInsight2.jpg";
@@ -9,7 +13,7 @@ import Image from "next/image";
 import Link from "next/link";
 import ParallaxBackground from "../_components/ParallelxBackground";
 
-const galleryData = [
+const staticGalleryData = [
   {
     src: pic1,
     alt: "Gallery Image 1",
@@ -43,7 +47,21 @@ const galleryData = [
   // Add more gallery items as needed
 ];
 
-export default function Page() {
+export default async function Page() {
+  const publishedEvents = await prisma.event.findMany({
+    where: { isPublished: true },
+    orderBy: { date: 'desc' }
+  })
+
+  const dbGalleryData = publishedEvents.map(event => ({
+    src: event.imageUrl,
+    alt: event.title,
+    title: event.title,
+    link: `/events/${event.slug}`,
+  }))
+
+  const galleryData = [...dbGalleryData, ...staticGalleryData]
+
   return (
     <>
       <ParallaxBackground />
@@ -66,7 +84,7 @@ export default function Page() {
         <div className="max-w-7xl mx-auto">
           {/* Gallery Title */}
           <h2 className="text-4xl font-semibold text-gray-800 text-center mb-10">
-            Our Professional Gallery
+            Our Events
           </h2>
 
           {/* Gallery Grid */}
@@ -78,8 +96,8 @@ export default function Page() {
                     <Image
                       src={item.src}
                       alt={item.alt}
-                      layout="fill"
-                      objectFit="fill"
+                      fill
+                      style={{ objectFit: 'cover' }}
                       className="rounded-t-lg"
                     />
                   </div>

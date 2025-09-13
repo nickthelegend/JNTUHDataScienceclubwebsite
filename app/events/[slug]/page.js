@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client'
+import { redirect } from 'next/navigation'
 
 const prisma = new PrismaClient()
 
@@ -13,6 +14,10 @@ export default async function EventPage({ params }) {
     return <div>Event not found</div>
   }
 
+  if (event.isPublished) {
+    redirect(`/register/event/${slug}`)
+  }
+
   return (
     <div className="container mx-auto p-6">
       <h1 className="text-4xl font-bold mb-4">{event.title}</h1>
@@ -24,11 +29,7 @@ export default async function EventPage({ params }) {
       <div className="bg-gray-50 p-4 rounded-lg">
         <p className="text-lg"><strong>Date:</strong> {new Date(event.date).toLocaleDateString()}</p>
         <p className="text-lg"><strong>Location:</strong> {event.location || 'TBD'}</p>
-        {event.isPublished && (
-          <a href={`/register/event/${slug}`} className="mt-4 inline-block bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-md font-medium">
-            Register Now
-          </a>
-        )}
+        <p className="text-red-600">This event is not yet published.</p>
       </div>
     </div>
   )
