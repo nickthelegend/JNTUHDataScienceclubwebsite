@@ -151,14 +151,13 @@ export default function EventRegistration() {
             <img
               src={event.imageUrl}
               alt={event.title}
-              className="w-full h-64 object-cover rounded-lg shadow-lg"
+              className="w-full h-auto max-h-96 object-contain rounded-lg shadow-lg"
             />
           )}
           <div className="bg-gradient-to-br from-orange-100 to-yellow-100 p-6 rounded-lg">
             <h4 className="text-xl font-bold text-gray-800 mb-2">Event Details</h4>
             <p className="text-lg"><strong>Date:</strong> {new Date(event.date).toLocaleDateString()}</p>
             <p className="text-lg"><strong>Venue:</strong> {event.location || 'CSE Seminar Hall'}</p>
-            <p className="text-sm text-gray-600 mt-2">Registration Fee: ₹50</p>
           </div>
         </div>
         {/* Right column: Sign In Prompt */}
@@ -218,14 +217,13 @@ export default function EventRegistration() {
             <img
               src={event.imageUrl}
               alt={event.title}
-              className="w-full h-64 object-cover rounded-lg shadow-lg"
+              className="w-full h-auto max-h-96 object-contain rounded-lg shadow-lg"
             />
           )}
           <div className="bg-gradient-to-br from-orange-100 to-yellow-100 p-6 rounded-lg">
             <h4 className="text-xl font-bold text-gray-800 mb-2">Event Details</h4>
             <p className="text-lg"><strong>Date:</strong> {new Date(event.date).toLocaleDateString()}</p>
             <p className="text-lg"><strong>Venue:</strong> {event.location || 'CSE Seminar Hall'}</p>
-            <p className="text-sm text-gray-600 mt-2">Registration Fee: ₹50</p>
           </div>
         </div>
         {/* Right column: Form */}
