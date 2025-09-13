@@ -64,6 +64,9 @@ export default function EventRegistration() {
     department: '',
     specialization: '',
     year: '',
+    phoneNo: '',
+    isContentCreator: false,
+    expectations: '',
     specificQuestions: '',
   })
   const [loading, setLoading] = useState(false)
@@ -82,6 +85,9 @@ export default function EventRegistration() {
       department: formData.department,
       specialization: formData.specialization,
       year: formData.year,
+      phoneNo: formData.phoneNo,
+      isContentCreator: formData.isContentCreator,
+      expectations: formData.expectations,
       specificQuestions: formData.specificQuestions,
     }
 
@@ -288,6 +294,53 @@ export default function EventRegistration() {
                 required
                 placeholder="e.g., 3rd Year"
               />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+              <input
+                type="tel"
+                value={formData.phoneNo}
+                onChange={(e) => setFormData({ ...formData, phoneNo: e.target.value })}
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                required
+                placeholder="e.g., +91 1234567890"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Are you a Content Creator?</label>
+              <div className="flex space-x-6">
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    value={true}
+                    checked={formData.isContentCreator === true}
+                    onChange={(e) => setFormData({ ...formData, isContentCreator: true })}
+                    className="mr-2"
+                  />
+                  Yes
+                </label>
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    value={false}
+                    checked={formData.isContentCreator === false}
+                    onChange={(e) => setFormData({ ...formData, isContentCreator: false })}
+                    className="mr-2"
+                  />
+                  No
+                </label>
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">What are you expecting from the event? (Max 100 chars)</label>
+              <textarea
+                value={formData.expectations}
+                onChange={(e) => setFormData({ ...formData, expectations: e.target.value })}
+                maxLength={100}
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent h-20"
+                placeholder="Describe your expectations..."
+              />
+              <p className="text-xs text-gray-500 mt-1">{formData.expectations.length}/100</p>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Specific Questions</label>

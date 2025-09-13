@@ -119,6 +119,7 @@ model EventRegistration {
   year             String?
   phoneNo          String?
   isContentCreator Boolean @default(false)
+  expectations     String?
   status           RegistrationStatus @default(PENDING)
   createdAt        DateTime @default(now())
 
