@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useSession, signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useParams } from 'next/navigation'
@@ -10,7 +10,33 @@ export default function EventRegistration() {
   const router = useRouter()
   const params = useParams()
   const slug = params.slug
-
+  
+  const [event, setEvent] = useState(null)
+  const [eventLoading, setEventLoading] = useState(true)
+  const [eventError, setEventError] = useState('')
+  
+  useEffect(() => {
+    const fetchEvent = async () => {
+      try {
+        setEventLoading(true)
+        const res = await fetch(`/api/events/${slug}`)
+        if (!res.ok) {
+          throw new Error('Event not found')
+        }
+        const data = await res.json()
+        setEvent(data)
+      } catch (err) {
+        setEventError(err.message)
+      } finally {
+        setEventLoading(false)
+      }
+    }
+  
+    if (slug) {
+      fetchEvent()
+    }
+  }, [slug])
+  
   const [formData, setFormData] = useState({
     fullName: session?.user?.fullName || '',
     rollNo: '',
@@ -59,6 +85,25 @@ export default function EventRegistration() {
   if (status === 'loading') {
     return <div className="container mx-auto p-6">Loading...</div>
   }
+  
+  if (eventLoading) {
+    return <div className="container mx-auto p-6">Loading event...</div>
+  }
+  
+  if (eventError || !event) {
+    return (
+      <div className="container mx-auto p-6 flex flex-col items-center justify-center min-h-[60vh]">
+        <h1 className="text-3xl font-bold mb-4">Event Not Found</h1>
+        <p className="text-gray-600 mb-4">No event like that exists.</p>
+        <button
+          onClick={() => router.push('/events')}
+          className="bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 rounded-lg font-medium"
+        >
+          Back to Events
+        </button>
+      </div>
+    )
+  }
 
   if (!session) {
     return (
@@ -93,7 +138,26 @@ export default function EventRegistration() {
 
   return (
     <div className="container mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-6">Register for Event</h1>
+      <div className="mb-8">
+        <h1 className="text-4xl font-bold mb-4">{event.title}</h1>
+        {event.description && <p className="text-xl text-gray-600 mb-6">{event.description}</p>}
+        {event.imageUrl && (
+          <img
+            src={event.imageUrl}
+            alt={event.title}
+            className="w-full h-64 object-cover rounded-lg mb-6"
+          />
+        )}
+        {event.content && (
+          <div className="prose max-w-none mb-8" dangerouslySetInnerHTML={{ __html: event.content }} />
+        )}
+        <div className="bg-gray-50 p-4 rounded-lg">
+          <p className="text-lg"><strong>Date:</strong> {new Date(event.date).toLocaleDateString()}</p>
+          <p className="text-lg"><strong>Location:</strong> {event.location || 'TBD'}</p>
+        </div>
+      </div>
+  
+      <h2 className="text-2xl font-bold mb-6">Register for {event.title}</h2>
       <form onSubmit={handleSubmit} className="max-w-md space-y-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
@@ -180,7 +244,7 @@ export default function EventRegistration() {
           disabled={loading}
           className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-md font-medium disabled:opacity-50"
         >
-          {loading ? 'Registering...' : 'Register'}
+          {loading ? 'Registering...' : `Register for ${event.title}`}
         </button>
       </form>
     </div>
