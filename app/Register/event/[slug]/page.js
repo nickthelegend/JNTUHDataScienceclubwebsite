@@ -196,7 +196,7 @@ export default function EventRegistration() {
                 💼
               </a>
             </div>
-            <p className="text-sm text-gray-500 mt-2">+91 93981 77850 | info@jntuhdsc.com</p>
+            <p className="text-sm text-gray-500 mt-2">+91 93981 77850 | jntudatascience@gmail.com</p>
           </div>
         </div>
       </div>
@@ -376,7 +376,7 @@ export default function EventRegistration() {
                 💼
               </a>
             </div>
-            <p className="text-sm text-gray-500 mt-2">+91 93981 77850 | info@jntuhdsc.com</p>
+            <p className="text-sm text-gray-500 mt-2">+91 93981 77850 | jntudatascience@gmail.com</p>
           </div>
         </div>
       </div>
