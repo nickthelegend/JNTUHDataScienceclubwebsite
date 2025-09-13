@@ -19,11 +19,11 @@ export default function EventsAdmin() {
     slug: '',
     description: '',
     content: '',
-    imageUrl: '',
     date: '',
     location: '',
     isPublished: false
   })
+  const [selectedFile, setSelectedFile] = useState(null)
 
   useEffect(() => {
     if (status === 'loading') return
@@ -43,48 +43,89 @@ export default function EventsAdmin() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    const method = editingEvent ? 'PUT' : 'POST'
-    const url = '/api/events'
-    const body = { ...formData }
-    if (editingEvent) body.id = editingEvent.id
+    try {
+      console.log('handleSubmit called')
+      const method = editingEvent ? 'PUT' : 'POST'
+      const url = '/api/events'
+      const body = new FormData()
 
-    const res = await fetch(url, {
-      method,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
-    })
+      body.append('title', formData.title)
+      body.append('slug', formData.slug)
+      body.append('description', formData.description)
+      body.append('content', formData.content)
+      body.append('date', formData.date)
+      body.append('location', formData.location)
+      if (formData.isPublished) {
+        body.append('isPublished', 'on')
+      }
+      if (editingEvent) {
+        body.append('id', editingEvent.id)
+        if (!selectedFile && editingEvent.imageUrl) {
+          body.append('existingImageUrl', editingEvent.imageUrl)
+        }
+      }
+      if (selectedFile) {
+        console.log('Appending file:', selectedFile.name, selectedFile.size)
+        body.append('poster', selectedFile)
+      } else {
+        console.log('No file selected')
+      }
 
-    if (res.ok) {
-      fetchEvents()
-      setShowModal(false)
-      setEditingEvent(null)
-      setFormData({
-        id: '',
-        title: '',
-        slug: '',
-        description: '',
-        content: '',
-        imageUrl: '',
-        date: '',
-        location: '',
-        isPublished: false
+      // Log FormData contents
+      for (let [key, value] of body.entries()) {
+        console.log(key, value)
+      }
+
+      console.log('Making fetch request to', url)
+      const res = await fetch(url, {
+        method,
+        body
       })
+
+      console.log('Response status:', res.status)
+
+      if (res.ok) {
+        const data = await res.json()
+        console.log('Success:', data)
+        fetchEvents()
+        setShowModal(false)
+        setEditingEvent(null)
+        setFormData({
+          id: '',
+          title: '',
+          slug: '',
+          description: '',
+          content: '',
+          date: '',
+          location: '',
+          isPublished: false
+        })
+        setSelectedFile(null)
+      } else {
+        const errorData = await res.json()
+        console.error('API Error:', errorData)
+        alert(`Upload failed: ${errorData.error || 'Unknown error'}`)
+      }
+    } catch (error) {
+      console.error('handleSubmit error:', error)
+      alert('An error occurred during submission: ' + error.message)
     }
   }
 
   const handleEdit = (event) => {
     setEditingEvent(event)
+    const dateStr = typeof event.date === 'string' ? event.date.split('T')[0] : new Date(event.date).toISOString().split('T')[0]
     setFormData({
       id: event.id,
       title: event.title,
       slug: event.slug,
       description: event.description || '',
       content: event.content || '',
-      imageUrl: event.imageUrl || '',
-      date: event.date.toISOString().split('T')[0],
+      date: dateStr,
       location: event.location || '',
       isPublished: event.isPublished
     })
+    setSelectedFile(null)
     setShowModal(true)
   }
 
@@ -97,6 +138,22 @@ export default function EventsAdmin() {
       })
       if (res.ok) fetchEvents()
     }
+  }
+
+  const resetForm = () => {
+    setEditingEvent(null)
+    setFormData({
+      id: '',
+      title: '',
+      slug: '',
+      description: '',
+      content: '',
+      date: '',
+      location: '',
+      isPublished: false
+    })
+    setSelectedFile(null)
+    setShowModal(false)
   }
 
   if (status === 'loading') return <div>Loading...</div>
@@ -131,11 +188,11 @@ export default function EventsAdmin() {
               slug: '',
               description: '',
               content: '',
-              imageUrl: '',
               date: '',
               location: '',
               isPublished: false
             })
+            setSelectedFile(null)
             setShowModal(true)
           }}
           className="mb-6 bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-md font-medium"
@@ -217,12 +274,14 @@ export default function EventsAdmin() {
                   className="w-full p-2 border rounded-md h-32"
                 />
                 <input
-                  type="url"
-                  placeholder="Image URL (for poster)"
-                  value={formData.imageUrl}
-                  onChange={(e) => setFormData({...formData, imageUrl: e.target.value})}
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setSelectedFile(e.target.files ? e.target.files[0] : null)}
                   className="w-full p-2 border rounded-md"
                 />
+                {selectedFile && (
+                  <p className="text-sm text-gray-600">Selected: {selectedFile.name}</p>
+                )}
                 <input
                   type="date"
                   value={formData.date}
@@ -255,21 +314,7 @@ export default function EventsAdmin() {
                   </button>
                   <button
                     type="button"
-                    onClick={() => {
-                      setShowModal(false)
-                      setEditingEvent(null)
-                      setFormData({
-                        id: '',
-                        title: '',
-                        slug: '',
-                        description: '',
-                        content: '',
-                        imageUrl: '',
-                        date: '',
-                        location: '',
-                        isPublished: false
-                      })
-                    }}
+                    onClick={resetForm}
                     className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md"
                   >
                     Cancel
