@@ -1,20 +1,32 @@
 'use client'
 
-import { signIn } from 'next-auth/react'
+import { signIn, useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 
 export default function AdminLogin() {
+  const { data: session, status } = useSession()
   const router = useRouter()
+
+  useEffect(() => {
+    if (status === 'authenticated' && session?.user?.role === 'admin') {
+      router.push('/admin')
+    } else if (status === 'authenticated' && session?.user?.role !== 'admin') {
+      router.push('/')
+    }
+  }, [status, session, router])
 
   const handleGoogleSignIn = () => {
     signIn('google', { callbackUrl: '/admin' })
   }
 
-  useEffect(() => {
-    // If already authenticated, redirect to admin dashboard
-    // useSession would be used here, but for dedicated login, assume middleware or page logic handles it
-  }, [])
+  if (status === 'loading') {
+    return <div className="min-h-screen flex items-center justify-center">Loading...</div>
+  }
+
+  if (status === 'authenticated') {
+    return <div className="min-h-screen flex items-center justify-center">Redirecting...</div>
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">

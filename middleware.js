@@ -6,7 +6,12 @@ export default withAuth(
   },
   {
     callbacks: {
-      authorized: ({ token }) => token?.role === 'admin',
+      authorized: ({ token, req }) => {
+        if (req.nextUrl.pathname.startsWith('/admin/login')) {
+          return true;
+        }
+        return !!token && token.role === 'admin';
+      },
     },
   }
 )

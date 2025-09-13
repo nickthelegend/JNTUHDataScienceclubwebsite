@@ -3,15 +3,22 @@
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import React, { useEffect } from "react";
 
 export default function AdminDashboard() {
   const { data: session, status } = useSession()
   const router = useRouter()
 
+  useEffect(() => {
+    if (status === 'unauthenticated' || (status === 'authenticated' && session?.user?.role !== 'admin')) {
+      router.push(status === 'unauthenticated' ? '/admin/login' : '/')
+      return
+    }
+  }, [status, session, router])
+
   if (status === 'loading') return <div className="p-6">Loading...</div>
 
   if (status === 'unauthenticated' || session?.user?.role !== 'admin') {
-    router.push('/admin/login')
     return null
   }
 
