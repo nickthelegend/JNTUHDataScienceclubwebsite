@@ -95,6 +95,8 @@ export const authOptions = {
           });
           if (isAdmin) {
             user.role = 'admin';
+          } else {
+            user.role = 'user';
           }
 
           return true;
@@ -111,8 +113,8 @@ export const authOptions = {
         token.role = user.role || 'user'
       }
 
-      // Persist role in token from DB for subsequent requests
-      if (token.sub && !token.role) {
+      // Always check DB for role to ensure it's up to date
+      if (token.sub) {
         const dbUser = await prisma.user.findUnique({
           where: { id: token.sub }
         })
