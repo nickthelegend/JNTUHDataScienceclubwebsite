@@ -9,7 +9,11 @@ export default async function EventPage({ params }) {
   const event = await prisma.event.findUnique({
     where: { slug }
   })
-
+  const today = new Date()
+  const eventDate = new Date(event.date)
+  if (today > eventDate) {
+    redirect(`/events/${slug}`)
+  }
   if (!event) {
     return <div>Event not found</div>
   }

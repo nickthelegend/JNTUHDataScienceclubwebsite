@@ -62,7 +62,7 @@ function Footer() {
       {/* Bottom Section */}
       <div className="bg-gray-700 text-center py-4">
         <p className="text-sm text-gray-300">
-          © 2024 Data Science Club | All Rights Reserved
+          © 2025 Data Science Club | All Rights Reserved
         </p>
       </div>
     </div>
